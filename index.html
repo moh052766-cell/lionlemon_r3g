@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LionLemon R3G</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
+
+body{
+overflow:hidden;
+background:black;
+color:white;
+}
+
+/* 3D Canvas */
+#bg{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* Main Content */
+.container{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+animation:fadeIn 2s ease-in-out;
+}
+
+h1{
+font-size:60px;
+background:linear-gradient(90deg,#ff0000,#ff9900);
+-webkit-background-clip:text;
+color:transparent;
+text-shadow:0 0 40px red;
+}
+
+#subCount{
+margin-top:20px;
+font-size:28px;
+color:#ff0000;
+text-shadow:0 0 20px red;
+}
+
+.btn{
+margin-top:30px;
+padding:15px 40px;
+background:linear-gradient(45deg,#ff0000,#ff9900);
+border:none;
+border-radius:40px;
+font-size:20px;
+cursor:pointer;
+color:white;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.1);
+box-shadow:0 0 30px red;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translate(-50%,-40%);}
+to{opacity:1;transform:translate(-50%,-50%);}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+<h1>LION LEMON 🔥</h1>
+<div id="subCount">Loading...</div>
+<button class="btn" onclick="window.open('https://www.youtube.com/channel/UCEXo3m1re9uCjl2PR25hwTA')">
+🎮 ادخل القناة
+</button>
+</div>
+
+<!-- THREE JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// 3D Background
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1,1000);
+const renderer = new THREE.WebGLRenderer({canvas:document.querySelector('#bg')});
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const geometry = new THREE.TorusGeometry(10,3,16,100);
+const material = new THREE.MeshStandardMaterial({color:0xff0000});
+const torus = new THREE.Mesh(geometry, material);
+
+scene.add(torus);
+
+const pointLight = new THREE.PointLight(0xffffff);
+pointLight.position.set(20,20,20);
+scene.add(pointLight);
+
+camera.position.z = 30;
+
+function animate(){
+requestAnimationFrame(animate);
+torus.rotation.x += 0.01;
+torus.rotation.y += 0.01;
+renderer.render(scene,camera);
+}
+animate();
+
+
+// 🔴 عداد مشتركين مباشر
+const API_KEY = "AIzaSyBhOUI38a86SaXU3DBXyqfITibwfJWqgx4";
+const CHANNEL_ID = "UCEXo3m1re9uCjl2PR25hwTA";
+
+async function getSubs(){
+const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`);
+const data = await res.json();
+const subs = data.items[0].statistics.subscriberCount;
+document.getElementById("subCount").innerText = "🔴 " + Number(subs).toLocaleString() + " مشترك";
+}
+
+getSubs();
+setInterval(getSubs,15000);
+</script>
+
+</body>
+</html>
